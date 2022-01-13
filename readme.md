@@ -23,6 +23,11 @@ mv /qmk/qmk_firmware/keyboards/ferris/keymaps/ryan-todd /mnt/qmk/qmk_firmware/ke
 ln -s /mnt/qmk/qmk_firmware/keyboards/ferris/keymaps/ryan-todd /qmk/qmk_firmware/keyboards/ferris/keymaps/ryan-todd
 ```
 
+Other runs:
 ```bash
+qmk setup --home /qmk/qmk_firmware --yes
+qmk config user.keyboard=ferris/sweep
+qmk config user.keymap=ryan-todd
+
 qmk compile
 ```

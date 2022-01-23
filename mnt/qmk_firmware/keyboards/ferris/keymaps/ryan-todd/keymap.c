@@ -29,21 +29,21 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                      LSFT_T(KC_SPC), LCTL_T_L0,    RALT_T_L1,    KC_BSPC
     ),
 
-	[_num_sym] = LAYOUT(
+    [_num_sym] = LAYOUT(
         KC_GRV,  KC_LBRC, KC_RBRC, KC_LCBR, KC_RCBR,                        KC_DEL,  KC_7,    KC_8,    KC_9,    KC_EQL,
         KC_TAB,  KC_COLN, CC_AT,   CC_TILD, CC_PIPE,                        KC_INS,  KC_4,    KC_5,    KC_6,    KC_MINS,
         KC_NUBS, KC_SCLN, KC_QUOT, KC_NUHS, KC_NO,                          KC_0,    KC_1,    KC_2,    KC_3,    KC_ENT,
                                      LSFT_T(KC_SPC), LCTL_T_L0,    RALT_T_L2,    KC_BSPC
     ),
 
-	[_nav] = LAYOUT(
+    [_nav] = LAYOUT(
         KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_ESC,                         KC_VOLU, KC_HOME, KC_PGDN, KC_PGUP, KC_END,
         KC_F5,   KC_F6,   KC_F7,   KC_F8,   TO(3),                          KC_VOLD, KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT,
         KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_LGUI,                        KC_MUTE, CC_CUT,  CC_COPY, CC_PSTE, KC_ENT,
                                      LSFT_T(KC_SPC), LCTL_T_L0,    RALT_T_L2,    KC_BSPC
     ),
 
-	[_games] = LAYOUT(
+    [_games] = LAYOUT(
         KC_1,    KC_2,    KC_3,    KC_4,    KC_5,                           KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,
         KC_LSFT, KC_A,    KC_W,    KC_D,    KC_E,                           KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,
         KC_LCTL, KC_Q,    KC_S,    KC_R,    KC_ESC,                         KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,

@@ -12,7 +12,8 @@ enum layers {
     _alpha_shifted,
     _num_sym,
     _nav,
-    _games
+    _games,
+    _games_shifted
 };
 
 enum my_keycodes { 
@@ -53,9 +54,16 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_games] = LAYOUT(
         KC_1,    KC_2,    KC_3,    KC_4,    KC_5,                           KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,
-        KC_LSFT, KC_A,    KC_W,    KC_D,    KC_E,                           KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,
-        KC_LCTL, KC_Q,    KC_S,    KC_R,    KC_ESC,                         KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,
-                                     KC_TAB,         KC_SPC,       KC_NO,        LCTL_T_L0
+        KC_LSFT, KC_A,    KC_W,    KC_D,    KC_R,                           KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,
+        KC_LCTL, KC_Q,    KC_S,    KC_E,    KC_F,                           KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,
+                                     MO(_games_shifted), KC_SPC,   KC_ESC,       LCTL_T_L0
+    ),
+
+    [_games_shifted] = LAYOUT(
+        KC_6,    KC_7,    KC_8,    KC_9,    KC_0,                           KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,
+        KC_LSFT, KC_A,    KC_W,    KC_D,    KC_T,                           KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,
+        KC_LCTL, KC_Z,    KC_S,    KC_C,    KC_G,                           KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,
+                                     MO(_games_shifted), KC_SPC,   KC_ESC,       LCTL_T_L0
     )
 };
 

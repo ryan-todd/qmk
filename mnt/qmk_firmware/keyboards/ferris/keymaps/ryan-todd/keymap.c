@@ -1,11 +1,6 @@
 #include QMK_KEYBOARD_H
-
-#define CC_CUT  LCTL(KC_X)
-#define CC_COPY LCTL(KC_C)
-#define CC_PSTE LCTL(KC_V)
-#define CC_AT   LSFT(KC_QUOT)
-#define CC_TILD LSFT(KC_NUHS)
 #define CC_PIPE LSFT(KC_NUBS)
+#define CC_DQUO LSFT(KC_2)
 
 enum layers {
     _alpha,
@@ -22,7 +17,6 @@ enum my_keycodes {
     RALT_T_L2,
     MC_DOT,     // dot, or comma when shifted
     MC_MINS,    // dash, or pipe when shifted
-    MC_PIPE,    // pipe, or broken pipe when shifted
     MC_COLN,    // colon, or ( when shifted
     MC_SCLN,    // semicolon, or ) when shifted
     MC_UHH,
@@ -39,8 +33,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
 
     [_num_sym] = LAYOUT(
-        KC_GRV,  KC_QUOT, KC_DQUO, MC_COLN, MC_SCLN,                        KC_EQL,  KC_7,    KC_8,    KC_9,    KC_BSPC,
-        KC_BSLS, MC_PIPE, KC_SLSH, KC_LBRC, KC_RBRC,                        KC_MINS, KC_4,    KC_5,    KC_6,    KC_NUHS,
+        KC_GRV,  KC_QUOT, CC_DQUO, MC_COLN, MC_SCLN,                        KC_EQL,  KC_7,    KC_8,    KC_9,    KC_BSPC,
+        KC_NUBS, CC_PIPE, KC_SLSH, KC_LBRC, KC_RBRC,                        KC_MINS, KC_4,    KC_5,    KC_6,    KC_NUHS,
         MC_EHH,  MC_UHH,  MC_OAH,  KC_COMM, KC_DOT,                         KC_0,    KC_1,    KC_2,    KC_3,    KC_ENT,
                                      LSFT_T(KC_SPC), LCTL_T_L0,    RALT_T_L2,    LGUI_T_TAB
     ),
@@ -48,7 +42,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_nav] = LAYOUT(
         KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_ESC,                         KC_VOLU, KC_HOME, KC_PGDN, KC_PGUP, KC_END,
         KC_F5,   KC_F6,   KC_F7,   KC_F8,   TO(_games),                     KC_VOLD, KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT,
-        KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_INS,                         KC_MUTE, CC_CUT,  CC_COPY, CC_PSTE, KC_ENT,
+        KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_INS,                         KC_MUTE, KC_TAB,  KC_NO,   KC_NO,   KC_ENT,
                                      LSFT_T(KC_SPC), LCTL_T_L0,    RALT_T_L2,    LGUI_T_TAB
     ),
 
@@ -80,6 +74,8 @@ bool RALT_T_L2_pressed;
 bool delkey_registered;
 bool MC_DOT_shifted;
 bool MC_MINS_shifted;
+bool MC_COLN_shifted;
+bool MC_SCLN_shifted;
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
@@ -190,6 +186,46 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     MC_MINS_shifted = false;
                 } else {
                     unregister_code(KC_MINS);
+                }
+            }
+            return false;
+        
+        case MC_COLN:
+            if (record->event.pressed) {
+                uint8_t mod_state = get_mods();
+                if (mod_state & MOD_MASK_SHIFT) {
+                    register_code(KC_9);
+                    MC_COLN_shifted = true;
+                } else {
+                    register_code(KC_LSFT);
+                    register_code(KC_SCLN);
+                }
+            } else {
+                if (MC_COLN_shifted) {
+                    unregister_code(KC_9);
+                    MC_COLN_shifted = false;
+                } else {
+                    unregister_code(KC_SCLN);
+                    unregister_code(KC_LSFT);
+                }
+            }
+            return false;
+
+        case MC_SCLN:
+            if (record->event.pressed) {
+                uint8_t mod_state = get_mods();
+                if (mod_state & MOD_MASK_SHIFT) {
+                    register_code(KC_0);
+                    MC_SCLN_shifted = true;
+                } else {
+                    register_code(KC_SCLN);
+                }
+            } else {
+                if (MC_SCLN_shifted) {
+                    unregister_code(KC_0);
+                    MC_SCLN_shifted = false;
+                } else {
+                    unregister_code(KC_SCLN);
                 }
             }
             return false;

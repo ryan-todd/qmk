@@ -9,7 +9,6 @@
 
 enum layers {
     _alpha,
-    _alpha_shifted,
     _num_sym,
     _nav,
     _games,
@@ -20,8 +19,7 @@ enum my_keycodes {
     LCTL_T_L0 = SAFE_RANGE,
     LGUI_T_TAB,
     RALT_T_L1,
-    RALT_T_L2,
-    MC_LSFT_0  // space, or "shift" alpha layer when held
+    RALT_T_L2
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -29,14 +27,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_Q,    KC_W,    KC_F,    KC_P,    KC_B,                           KC_J,    KC_L,    KC_U,    KC_Y,    KC_BSPC,
         KC_A,    KC_R,    KC_S,    KC_T,    KC_G,                           KC_M,    KC_N,    KC_E,    KC_I,    KC_O,
         KC_Z,    KC_X,    KC_C,    KC_D,    KC_V,                           KC_K,    KC_H,    KC_DOT,  KC_MINS, KC_ENT,
-                                     MC_LSFT_0,      LCTL_T_L0,    RALT_T_L1,    LGUI_T_TAB
-    ),
-
-    [_alpha_shifted] = LAYOUT(
-        LSFT(KC_Q), LSFT(KC_W), LSFT(KC_F), LSFT(KC_P), LSFT(KC_B),            LSFT(KC_J), LSFT(KC_L), LSFT(KC_U), LSFT(KC_Y), KC_DEL,
-        LSFT(KC_A), LSFT(KC_R), LSFT(KC_S), LSFT(KC_T), LSFT(KC_G),            LSFT(KC_M), LSFT(KC_N), LSFT(KC_E), LSFT(KC_I), LSFT(KC_O),
-        LSFT(KC_Z), LSFT(KC_X), LSFT(KC_C), LSFT(KC_D), LSFT(KC_V),            LSFT(KC_K), LSFT(KC_H), KC_COMM,    CC_PIPE,    LSFT(KC_ENT),
-                                                 MC_LSFT_0,   LCTL_T_L0,   RALT_T_L1,    LGUI_T_TAB
+                                     LSFT_T(KC_SPC), LCTL_T_L0,    RALT_T_L1,    LGUI_T_TAB
     ),
 
     [_num_sym] = LAYOUT(
@@ -72,12 +63,13 @@ uint16_t timer_LCTL_T_L0;
 uint16_t timer_LGUI_T_TAB;
 uint16_t timer_RALT_T_L1;
 uint16_t timer_RALT_T_L2;
-uint16_t timer_MC_LSFT_0;
 
 bool LCTL_T_L0_pressed;
 bool LGUI_T_TAB_pressed;
 bool RALT_T_L1_pressed;
 bool RALT_T_L2_pressed;
+
+bool delkey_registered;
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
@@ -133,17 +125,24 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             return false;
 
-        case MC_LSFT_0:
+        case KC_BSPC:
             if (record->event.pressed) {
-                layer_move(_alpha_shifted);
-                timer_MC_LSFT_0 = timer_read();
+                uint8_t mod_state = get_mods();
+                if (mod_state & MOD_MASK_SHIFT) {
+                    del_mods(MOD_MASK_SHIFT);
+                    register_code(KC_DEL);
+                    delkey_registered = true;
+                    set_mods(mod_state);
+                    return false;
+                }
             } else {
-                layer_clear();
-                if (timer_elapsed(timer_MC_LSFT_0) < TAPPING_TERM) {
-                    tap_code(KC_SPC);
+                if (delkey_registered) {
+                    unregister_code(KC_DEL);
+                    delkey_registered = false;
+                    return false;
                 }
             }
-            return false;
+            return true;
 
         default:
             return true;

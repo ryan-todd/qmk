@@ -19,14 +19,16 @@ enum my_keycodes {
     LCTL_T_L0 = SAFE_RANGE,
     LGUI_T_TAB,
     RALT_T_L1,
-    RALT_T_L2
+    RALT_T_L2,
+    MC_DOT,     // dot, or comma when shifted
+    MC_MINS,    // dash, or pipe when shifted
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_alpha] = LAYOUT(
         KC_Q,    KC_W,    KC_F,    KC_P,    KC_B,                           KC_J,    KC_L,    KC_U,    KC_Y,    KC_BSPC,
         KC_A,    KC_R,    KC_S,    KC_T,    KC_G,                           KC_M,    KC_N,    KC_E,    KC_I,    KC_O,
-        KC_Z,    KC_X,    KC_C,    KC_D,    KC_V,                           KC_K,    KC_H,    KC_DOT,  KC_MINS, KC_ENT,
+        KC_Z,    KC_X,    KC_C,    KC_D,    KC_V,                           KC_K,    KC_H,    MC_DOT,  MC_MINS, KC_ENT,
                                      LSFT_T(KC_SPC), LCTL_T_L0,    RALT_T_L1,    LGUI_T_TAB
     ),
 
@@ -70,6 +72,8 @@ bool RALT_T_L1_pressed;
 bool RALT_T_L2_pressed;
 
 bool delkey_registered;
+bool MC_DOT_shifted;
+bool MC_MINS_shifted;
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
@@ -143,6 +147,47 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 }
             }
             return true;
+        
+        case MC_DOT:
+            if (record->event.pressed) {
+                uint8_t mod_state = get_mods();
+                if (mod_state & MOD_MASK_SHIFT) {
+                    del_mods(MOD_MASK_SHIFT);
+                    register_code(KC_COMM);
+                    MC_DOT_shifted = true;
+                    set_mods(mod_state);
+                } else {
+                    register_code(KC_DOT);
+                }
+            } else {
+                if (MC_DOT_shifted) {
+                    unregister_code(KC_COMM);
+                    MC_DOT_shifted = false;
+                } else {
+                    unregister_code(KC_DOT);
+                }
+            }
+            return false;
+        
+        case MC_MINS:
+            if (record->event.pressed) {
+                uint8_t mod_state = get_mods();
+                if (mod_state & MOD_MASK_SHIFT) {
+                    register_code(KC_NUBS);
+                    MC_MINS_shifted = true;
+                } else {
+                    register_code(KC_MINS);
+                }
+            } else {
+                if (MC_MINS_shifted) {
+                    unregister_code(KC_NUBS);
+                    MC_MINS_shifted = false;
+                } else {
+                    unregister_code(KC_MINS);
+                }
+            }
+            return false;
+            
 
         default:
             return true;

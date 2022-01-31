@@ -22,6 +22,12 @@ enum my_keycodes {
     RALT_T_L2,
     MC_DOT,     // dot, or comma when shifted
     MC_MINS,    // dash, or pipe when shifted
+    MC_PIPE,    // pipe, or broken pipe when shifted
+    MC_COLN,    // colon, or ( when shifted
+    MC_SCLN,    // semicolon, or ) when shifted
+    MC_UHH,
+    MC_EHH,
+    MC_OAH
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -33,9 +39,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
 
     [_num_sym] = LAYOUT(
-        KC_GRV,  KC_LBRC, KC_RBRC, KC_COMM, KC_DOT,                         KC_EQL,  KC_7,    KC_8,    KC_9,    KC_BSPC,
-        KC_TAB,  KC_COLN, CC_AT,   CC_TILD, CC_PIPE,                        KC_MINS, KC_4,    KC_5,    KC_6,    KC_DOT,
-        KC_NUBS, KC_SCLN, KC_QUOT, KC_NUHS, KC_SLSH,                        KC_0,    KC_1,    KC_2,    KC_3,    KC_ENT,
+        KC_GRV,  KC_QUOT, KC_DQUO, MC_COLN, MC_SCLN,                        KC_EQL,  KC_7,    KC_8,    KC_9,    KC_BSPC,
+        KC_BSLS, MC_PIPE, KC_SLSH, KC_LBRC, KC_RBRC,                        KC_MINS, KC_4,    KC_5,    KC_6,    KC_NUHS,
+        MC_EHH,  MC_UHH,  MC_OAH,  KC_COMM, KC_DOT,                         KC_0,    KC_1,    KC_2,    KC_3,    KC_ENT,
                                      LSFT_T(KC_SPC), LCTL_T_L0,    RALT_T_L2,    LGUI_T_TAB
     ),
 
@@ -98,7 +104,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 LGUI_T_TAB_pressed = false;
                 unregister_code(KC_LGUI);
                 if (timer_elapsed(timer_LGUI_T_TAB) < TAPPING_TERM) {
-                    register_code(KC_TAB);
+                    tap_code(KC_TAB);
                 }
             }
             return false;
@@ -187,7 +193,63 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 }
             }
             return false;
-            
+
+        case MC_EHH:
+            if (record->event.pressed) {
+                uint8_t mod_state = get_mods();
+                clear_mods();
+                register_code(KC_LALT);
+                if (mod_state & MOD_MASK_SHIFT) {
+                    tap_code(KC_P1);
+                    tap_code(KC_P4);
+                    tap_code(KC_P2);
+                } else {
+                    tap_code(KC_P1);
+                    tap_code(KC_P3);
+                    tap_code(KC_P2);
+                }
+                unregister_code(KC_LALT);
+                set_mods(mod_state);
+            }
+            return false;
+
+        case MC_UHH:
+            if (record->event.pressed) {
+                uint8_t mod_state = get_mods();
+                clear_mods();
+                register_code(KC_LALT);
+                if (mod_state & MOD_MASK_SHIFT) {
+                    tap_code(KC_P1);
+                    tap_code(KC_P5);
+                    tap_code(KC_P3);
+                } else {
+                    tap_code(KC_P1);
+                    tap_code(KC_P4);
+                    tap_code(KC_P8);
+                }
+                unregister_code(KC_LALT);
+                set_mods(mod_state);
+            }
+            return false;
+
+        case MC_OAH:
+            if (record->event.pressed) {
+                uint8_t mod_state = get_mods();
+                clear_mods();
+                register_code(KC_LALT);
+                if (mod_state & MOD_MASK_SHIFT) {
+                    tap_code(KC_P1);
+                    tap_code(KC_P4);
+                    tap_code(KC_P3);
+                } else {
+                    tap_code(KC_P1);
+                    tap_code(KC_P3);
+                    tap_code(KC_P4);
+                }
+                unregister_code(KC_LALT);
+                set_mods(mod_state);
+            }
+            return false;
 
         default:
             return true;
